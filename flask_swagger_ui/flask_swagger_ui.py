@@ -3,12 +3,18 @@ import json
 from flask import Blueprint, send_from_directory, render_template, request
 
 
-def get_swaggerui_blueprint(base_url, api_url, config=None, oauth_config=None):
+def get_swaggerui_blueprint(
+        base_url,
+        api_url,
+        config=None,
+        static_folder='dist',
+        template_folder='templates',
+        oauth_config=None):
 
     swagger_ui = Blueprint('swagger_ui',
                            __name__,
-                           static_folder='dist',
-                           template_folder='templates')
+                           static_folder=static_folder,
+                           template_folder=template_folder)
 
     default_config = {
         'app_name': 'Swagger UI',
