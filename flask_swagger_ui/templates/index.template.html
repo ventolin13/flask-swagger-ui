@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <title>{{app_name}}</title>
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Source+Code+Pro:300,600|Titillium+Web:400,600,700" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="./swagger-ui.css" >
+    <link rel="stylesheet" type="text/css" href="{{base_url}}/swagger-ui.css" >
     <link rel="icon" type="image/png" href="{{base_url}}/favicon-32x32.png" sizes="32x32" />
     <link rel="icon" type="image/png" href="{{base_url}}/favicon-16x16.png" sizes="16x16" />
     <style>
@@ -32,30 +32,37 @@
   </head>
 
   <body>
-    <div id="swagger-ui"></div>
+<div id="swagger-ui"></div>
 
-    <script src="{{base_url}}/swagger-ui-bundle.js"> </script>
-    <script src="{{base_url}}/swagger-ui-standalone-preset.js"> </script>
-    <script>
-    window.onload = function() {
+<script src="{{base_url}}/swagger-ui-bundle.js"> </script>
+<script src="{{base_url}}/swagger-ui-standalone-preset.js"> </script>
+<script>
+var config = {
+  presets: [
+    SwaggerUIBundle.presets.apis,
+    SwaggerUIStandalonePreset
+  ],
+  plugins: [
+    SwaggerUIBundle.plugins.DownloadUrl
+  ]
+};
+var user_config = {{config_json|safe}};  // User config options provided from Python code
+for (var attrname in user_config) { config[attrname] = user_config[attrname]; }
+console.log(config);
 
-      // Build a system
-      const ui = SwaggerUIBundle({
-        url: {{config_json|safe}},
-        dom_id: '#swagger-ui',
-        deepLinking: true,
-        presets: [
-          SwaggerUIBundle.presets.apis,
-          SwaggerUIStandalonePreset
-        ],
-        plugins: [
-          SwaggerUIBundle.plugins.DownloadUrl
-        ],
-        layout: "StandaloneLayout"
-      })
+window.onload = function() {
+  // Build a system
+  const ui = SwaggerUIBundle(config)
 
-      window.ui = ui
-    }
-  </script>
-  </body>
+  {% if oauth_config_json %}
+    var oauth_user_config = {{oauth_config_json|safe}};  // OAuth2 user config options provided from Python code
+    console.log(oauth_user_config);
+    ui.initOAuth(oauth_user_config);
+  {% endif %}
+
+  window.ui = ui
+}
+</script>
+</body>
+
 </html>
