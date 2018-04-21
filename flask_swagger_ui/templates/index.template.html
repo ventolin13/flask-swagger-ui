@@ -38,6 +38,9 @@
 <script src="{{base_url}}/swagger-ui-standalone-preset.js"> </script>
 <script>
 var config = {
+  url: {{config_json|safe}},
+  dom_id: '#swagger-ui',
+  deepLinking: true,
   presets: [
     SwaggerUIBundle.presets.apis,
     SwaggerUIStandalonePreset
